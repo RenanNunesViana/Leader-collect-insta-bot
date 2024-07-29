@@ -3,8 +3,9 @@ const Tesseract = require('tesseract.js');
 require('dotenv').config()
 
 async function scrapeInstagram() {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: false, defaultViewport: { width: 1920, height: 1080 } });
     const page = await browser.newPage();
+    //await page.setViewport({ width: 1920, height: 1080 });
     await page.goto('https://www.instagram.com', { waitUntil: 'networkidle2' });
 
     // Login
@@ -13,8 +14,15 @@ async function scrapeInstagram() {
     await page.click('button[type="submit"]');
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-    // Navegar para a página de um usuário específico
-    await page.goto('https://www.instagram.com/user_profile', { waitUntil: 'networkidle2' });
+
+
+    await page.goto(`https://www.instagram.com/${process.env.PROFILE}`, { waitUntil: 'networkidle2' });
+
+    await page.waitForSelector('svg[aria-label="Pesquisa"]');
+    await page.click('svg[aria-label="Pesquisa"]');
+
+    await page.waitForSelector('input[aria-label="Entrada da pesquisa"]');
+    await page.type('input[aria-label="Entrada da pesquisa"]', 'empregosjp')
 }
 // Capturar as URLs das imagens dos posts
 //     const imageUrls = await page.evaluate(() => {
